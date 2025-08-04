@@ -1,3 +1,5 @@
+#![allow(deprecated)]
+#![allow(unexpected_cfgs)]
 pub mod constants;
 pub mod error;
 pub mod instructions;
@@ -15,7 +17,7 @@ declare_id!("Auh1xSS7jBH2jRVLRdcV4P7fiLh9nrXFcp1K9RVvCJQA");
 pub mod amm {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        initialize::handler(ctx)
+    pub fn initialize_pool(ctx: Context<InitializePool>, swap_fee: u16) -> Result<()> {
+        ctx.accounts.process_initialize_pool(swap_fee, &ctx.bumps)
     }
 }
