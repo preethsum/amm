@@ -31,4 +31,14 @@ pub mod amm {
         ctx.accounts
             .process_add_liquidity(amount_x, amount_y, amount_lp)
     }
+
+    pub fn remove_liquidity(
+        ctx: Context<Liquidity>,
+        amount_x: u64, // expected amount of x tokens on burning amount_lp lp tokens
+        amount_y: u64, // expected amount of y tokens on burning amount_lp lp tokens
+        amount_lp: u64,
+    ) -> Result<()> {
+        ctx.accounts
+            .process_remove_liquidity(amount_x, amount_y, amount_lp)
+    }
 }

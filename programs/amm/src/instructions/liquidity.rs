@@ -5,7 +5,10 @@ use anchor_spl::{
 };
 use constant_product_curve::{ConstantProduct, XYAmounts};
 
-use crate::{error::AmmError, mint_lp, transfer_tokens, Pool, LP_SEED, POOL_SEED};
+use crate::{
+    burn_lp, error::AmmError, mint_lp, program::Amm, transfer_tokens, transfer_tokens_pda, Pool,
+    LP_SEED, POOL_SEED,
+};
 
 #[derive(Accounts)]
 pub struct Liquidity<'info> {
@@ -143,6 +146,61 @@ impl<'info> Liquidity<'info> {
             &self.token_program,
         )?;
 
+        Ok(())
+    }
+    pub fn process_remove_liquidity(
+        &self,
+        amount_x: u64,
+        amount_y: u64,
+        amount_lp: u64,
+    ) -> Result<()> {
+        // Check if the amount_x and amount_y are greater than the expected amounts for the lp amount
+        require!(
+            amount_x != 0 && amount_y != 0 && amount_lp != 0,
+            AmmError::InvalidAmount
+        );
+        let xy_ammounts = ConstantProduct::xy_withdraw_amounts_from_l(
+            self.mint_x.supply,
+            self.mint_y.supply,
+            amount_lp,
+            self.mint_lp.supply,
+            9,
+        )
+        .unwrap();
+
+        if xy_ammounts.x < amount_x && xy_ammounts.y < amount_y {
+            return Err(AmmError::InvalidAmount.into());
+        }
+
+        let signer_seeds: &[&[&[u8]]] =
+            &[&[LP_SEED, &self.pool.key().to_bytes(), &[self.pool.lp_bump]]];
+
+        transfer_tokens_pda(
+            &self.vault_x,
+            &self.maker_ata_x,
+            &self.mint_x,
+            xy_ammounts.x,
+            signer_seeds,
+            &self.token_program,
+        )?;
+
+        transfer_tokens_pda(
+            &self.vault_y,
+            &self.maker_ata_y,
+            &self.mint_y,
+            xy_ammounts.y,
+            signer_seeds,
+            &self.token_program,
+        )?;
+
+        burn_lp(
+            &self.mint_lp,
+            &self.maker_ata_lp,
+            &self.pool,
+            amount_lp,
+            signer_seeds,
+            &self.token_program,
+        )?;
         Ok(())
     }
 }
