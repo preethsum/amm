@@ -5,7 +5,7 @@ use anchor_spl::{
 };
 use constant_product_curve::{ConstantProduct, XYAmounts};
 
-use crate::{error::AmmError, transfer_tokens, Pool, LP_SEED, POOL_SEED};
+use crate::{error::AmmError, mint_lp, transfer_tokens, Pool, LP_SEED, POOL_SEED};
 
 #[derive(Accounts)]
 pub struct Liquidity<'info> {
@@ -129,6 +129,18 @@ impl<'info> Liquidity<'info> {
             &self.mint_y,
             &self.token_program,
             required_y,
+        )?;
+
+        let signer_seeds: &[&[&[u8]]] =
+            &[&[LP_SEED, &self.pool.key().to_bytes(), &[self.pool.lp_bump]]];
+
+        mint_lp(
+            &self.mint_lp,
+            &self.maker_ata_lp,
+            &self.pool,
+            amount_lp,
+            signer_seeds,
+            &self.token_program,
         )?;
 
         Ok(())
