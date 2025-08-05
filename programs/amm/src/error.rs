@@ -6,4 +6,6 @@ pub enum AmmError {
     SimilarMints,
     #[msg("Swap fee should be less than or equal to one")]
     InvalidSwapFee,
+    #[msg("Amount cannot be zero")]
+    InvalidAmount,
 }
