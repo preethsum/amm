@@ -41,4 +41,11 @@ pub mod amm {
         ctx.accounts
             .process_remove_liquidity(amount_x, amount_y, amount_lp)
     }
+
+    // is_x specify the whether the swaping for is x or not
+    // if swapping for x then amount_y becomes the input amount and the amount_x is min amount of x to get back
+    pub fn swap(ctx: Context<Swap>, amount_x: u64, amount_y: u64, is_x: bool) -> Result<()> {
+        ctx.accounts.process_swap(amount_x, amount_y, is_x)?;
+        Ok(())
+    }
 }

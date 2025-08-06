@@ -97,3 +97,44 @@ pub fn burn_lp<'info>(
         amount,
     )
 }
+
+pub fn swap_tokens<'info>(
+    mint_x: &InterfaceAccount<'info, Mint>,
+    mint_y: &InterfaceAccount<'info, Mint>,
+    vault_x: &InterfaceAccount<'info, TokenAccount>,
+    vault_y: &InterfaceAccount<'info, TokenAccount>,
+    user_ata_x: &InterfaceAccount<'info, TokenAccount>,
+    user_ata_y: &InterfaceAccount<'info, TokenAccount>,
+    amount_x: u64, // if is_x then how much amount x to transfer else amount send from user
+    amount_y: u64,
+    is_x: bool,
+    signer_seeds: &[&[&[u8]]],
+    token_program: &Interface<'info, TokenInterface>,
+) -> Result<()> {
+    match is_x {
+        true => {
+            // user sends mint_y tokens to get mint_x tokens
+            transfer_tokens(user_ata_y, vault_y, mint_y, token_program, amount_y)?;
+            transfer_tokens_pda(
+                vault_x,
+                user_ata_x,
+                mint_x,
+                amount_x,
+                signer_seeds,
+                token_program,
+            )?;
+        }
+        false => {
+            transfer_tokens(user_ata_x, vault_x, mint_x, token_program, amount_x)?;
+            transfer_tokens_pda(
+                vault_y,
+                user_ata_y,
+                mint_y,
+                amount_y,
+                signer_seeds,
+                token_program,
+            )?;
+        }
+    }
+    Ok(())
+}

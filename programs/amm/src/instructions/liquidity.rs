@@ -3,11 +3,11 @@ use anchor_spl::{
     associated_token::AssociatedToken,
     token_interface::{Mint, TokenAccount, TokenInterface},
 };
-use constant_product_curve::{ConstantProduct, XYAmounts};
+use constant_product_curve::ConstantProduct;
 
 use crate::{
-    burn_lp, error::AmmError, mint_lp, program::Amm, transfer_tokens, transfer_tokens_pda, Pool,
-    LP_SEED, POOL_SEED,
+    burn_lp, error::AmmError, mint_lp, transfer_tokens, transfer_tokens_pda, Pool, LP_SEED,
+    POOL_SEED,
 };
 
 #[derive(Accounts)]

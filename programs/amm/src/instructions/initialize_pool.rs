@@ -17,7 +17,7 @@ pub struct InitializePool<'info> {
     pub mint_x: InterfaceAccount<'info, Mint>,
 
     #[account(
-        mint::token_program= token_program
+        mint::token_program = token_program
     )]
     pub mint_y: InterfaceAccount<'info, Mint>,
 
