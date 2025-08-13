@@ -75,7 +75,9 @@ impl<'info> Swap<'info> {
                 let expected_x = ConstantProduct::delta_x_from_y_swap_amount(
                     self.vault_x.amount,
                     self.vault_y.amount,
-                    amount_y.checked_mul(1 - self.pool.swap_fee as u64).unwrap(),
+                    amount_y
+                        .checked_mul(1 - (self.pool.swap_fee / 100) as u64)
+                        .unwrap(),
                 )
                 .unwrap();
                 swap_tokens(
@@ -96,7 +98,9 @@ impl<'info> Swap<'info> {
                 let expected_y = ConstantProduct::delta_y_from_x_swap_amount(
                     self.vault_x.amount,
                     self.vault_y.amount,
-                    amount_x.checked_mul(1 - self.pool.swap_fee as u64).unwrap(),
+                    amount_x
+                        .checked_mul(1 - (self.pool.swap_fee / 100) as u64)
+                        .unwrap(),
                 )
                 .unwrap();
                 swap_tokens(

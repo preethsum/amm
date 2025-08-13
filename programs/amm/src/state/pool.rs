@@ -7,7 +7,7 @@ pub struct Pool {
     pub mint_x: Pubkey,
     pub mint_y: Pubkey,
     pub is_locked: bool,
-    pub swap_fee: u16,
+    pub swap_fee: u16, // 0% - 100% to the input amount
     pub lp_bump: u8,
     pub bump: u8,
 }

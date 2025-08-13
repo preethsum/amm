@@ -12,7 +12,7 @@ pub struct InitializePool<'info> {
     pub initializer: Signer<'info>,
 
     #[account(
-        mint::token_program= token_program
+        mint::token_program = token_program
     )]
     pub mint_x: InterfaceAccount<'info, Mint>,
 
@@ -64,6 +64,7 @@ pub struct InitializePool<'info> {
     pub token_program: Interface<'info, TokenInterface>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
 }
 
 impl<'info> InitializePool<'info> {
@@ -76,7 +77,7 @@ impl<'info> InitializePool<'info> {
             self.mint_x.key() != self.mint_y.key(),
             AmmError::SimilarMints
         );
-        require!(swap_fee <= 1, AmmError::InvalidSwapFee);
+        require!(swap_fee <= 100, AmmError::InvalidSwapFee);
         self.pool.set_inner(Pool {
             initializer: self.initializer.key(),
             mint_x: self.mint_x.key(),
